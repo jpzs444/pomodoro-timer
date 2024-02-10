@@ -1,40 +1,87 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const App = () => {
 
   const [breakLength, setBreakLength] = useState(5);
   const [sessionLength, setSessionLength] = useState(25);
-  const [timeLeft, setTimeLeft] = useState(25);
+  const [timeLeft, setTimeLeft] = useState('25:00');
+  const [isTimerOn, setIsTimerOn] = useState(false);
 
   const resetTimer = () => {
     setBreakLength(5);
     setSessionLength(25);
-    setTimeLeft(25);
+    setTimeLeft('25:00');
+    setIsTimerOn(false);
+    clearInterval(timer.current);
   }
 
   const decrementBreak = () => {
     if (breakLength >= 2)
-      setBreakLength(breakLength - 1);
+      setBreakLength(prevBreakLength => prevBreakLength - 1);
   }
 
   const incrementBreak = () => {
     if (breakLength <= 59)
-      setBreakLength(breakLength + 1);
+      setBreakLength(prevBreakLength => prevBreakLength + 1);
   }
 
   const decrementSession = () => {
     if (sessionLength >= 2) {
-      setSessionLength(sessionLength - 1);
-      setTimeLeft(sessionLength - 1);
+      setSessionLength(prevSessionLength => prevSessionLength - 1);
+
+      if (sessionLength < 11) {
+        setTimeLeft(`0${sessionLength - 1}:00`);
+      } else {
+        setTimeLeft(`${sessionLength - 1}:00`);
+      }
     }
   }
 
   const incrementSession = () => {
     if (sessionLength <= 59){
-      setSessionLength(sessionLength + 1);
-      setTimeLeft(sessionLength + 1);
+      setSessionLength(prevSessionLength => prevSessionLength + 1);
+
+      if (sessionLength < 9) {
+        setTimeLeft(`0${sessionLength + 1}:00`);
+      } else {
+        setTimeLeft(`${sessionLength + 1}:00`);
+      }
     }
   }
+
+  let timer = useRef(null);
+
+  useEffect(() => {
+    let currentTime = timeLeft.split(':');
+    let time = parseInt(currentTime[0]) * 60 + parseInt(currentTime[1]);
+
+    if (isTimerOn && time >= 1) {
+      timer.current = setInterval(() => {
+        let minutes = Math.floor(time / 60);
+        let seconds = time % 60;
+
+        if (minutes < 10) {
+          minutes = '0' + minutes;
+        }
+
+        if (seconds < 10) {
+          seconds = '0' + seconds;
+        }
+
+        setTimeLeft(`${minutes}:${seconds}`);
+        time--;
+
+        if (time < 0) {
+          clearInterval(timer.current);
+          setTimeLeft('00:00');
+        }
+      }, 1000);
+    } else {
+      clearInterval(timer.current);
+    }
+
+    return () => clearInterval(timer.current);
+  }, [isTimerOn, timer, sessionLength, timeLeft]);
 
   return (
     <main>
@@ -55,10 +102,10 @@ const App = () => {
       {/* Output */}
       <p id="timer-label">Session</p>
       <p id="time-left">{timeLeft}</p>
-      <button id="start_stop">start / stop</button>
+      <button id="start_stop" onClick={() => setIsTimerOn(prevIsTimerOn => !prevIsTimerOn)}>start / stop</button>
       <button id="reset" onClick={resetTimer}>reset</button>
 
-      {/* TODO: User Story #11, #18*/}
+      {/* TODO: User Story #22*/}
     </main>
   )
 }
