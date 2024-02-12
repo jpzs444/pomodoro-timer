@@ -15,6 +15,7 @@ const App = () => {
     setIsTimerOn(false);
     setIsSessionDone(false);
     clearInterval(timer.current);
+    pauseAudio();
   }
 
   const decrementBreak = () => {
@@ -66,18 +67,20 @@ const App = () => {
 
         if (time < 0) {
           clearInterval(timer.current);
-          setIsSessionDone(prevIsSessionDone => !prevIsSessionDone);
+          setTimeout(() => playAudio(), 1000);
+          // playAudio();
+          setTimeout(() => setIsSessionDone(prevIsSessionDone => !prevIsSessionDone), 4000);
           
           if (!isSessionDone) {
             setTimeout(() => setTimeLeft(`${breakLength < 10 
               ? '0' + breakLength + ':00' 
               : breakLength + ':00'}`)
-            , 1000);
+            , 4000);
           } else {
             setTimeout(() => setTimeLeft(`${sessionLength < 10 
               ? '0' + sessionLength + ':00' 
               : sessionLength + ':00'}`)
-            , 1000);
+            , 4000);
           }
         }
       }, 500);
@@ -87,6 +90,19 @@ const App = () => {
 
     return () => clearInterval(timer.current);
   }, [isTimerOn, timer, sessionLength, timeLeft, breakLength, isSessionDone]);
+
+  const playAudio = () => {
+    const audio = document.getElementById("beep");
+    audio.currentTime = 0;
+    audio.play();
+    setTimeout(() => audio.pause(), 4000);
+  }
+
+  const pauseAudio = () => {
+    const audio = document.getElementById("beep");
+    audio.pause();
+    audio.currentTime = 0;
+  }
 
   return (
     <main>
@@ -107,7 +123,14 @@ const App = () => {
       {/* Output */}
       <p id="timer-label">{isSessionDone ? 'Break' : 'Session'}</p>
       <p id="time-left">{timeLeft}</p>
-      <button id="start_stop" onClick={() => setIsTimerOn(prevIsTimerOn => !prevIsTimerOn)}>start / stop</button>
+      <button id="start_stop" onClick={() => setIsTimerOn(prevIsTimerOn => !prevIsTimerOn)}>
+        start / stop
+        <audio 
+          id="beep" 
+          src="https://actions.google.com/sounds/v1/alarms/mechanical_clock_ring.ogg"
+          type="audio/ogg">
+        </audio>
+      </button>
       <button id="reset" onClick={resetTimer}>reset</button>
 
       {/* TODO: User Story #26*/}
