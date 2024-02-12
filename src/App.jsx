@@ -30,24 +30,20 @@ const App = () => {
   const decrementSession = () => {
     if (sessionLength >= 2) {
       setSessionLength(prevSessionLength => prevSessionLength - 1);
-
-      if (sessionLength < 11) {
-        setTimeLeft(`0${sessionLength - 1}:00`);
-      } else {
-        setTimeLeft(`${sessionLength - 1}:00`);
-      }
+      setTimeLeft(`${sessionLength < 11
+        ? '0' + sessionLength - 1 + ':00' 
+        : sessionLength - 1 + ':00'
+      }`)
     }
   }
 
   const incrementSession = () => {
     if (sessionLength <= 59){
       setSessionLength(prevSessionLength => prevSessionLength + 1);
-
-      if (sessionLength < 9) {
-        setTimeLeft(`0${sessionLength + 1}:00`);
-      } else {
-        setTimeLeft(`${sessionLength + 1}:00`);
-      }
+      setTimeLeft(`${sessionLength < 9
+        ? '0' + sessionLength + 1 + ':00' 
+        : sessionLength + 1 + ':00'
+      }`)
     }
   }
 
@@ -71,6 +67,7 @@ const App = () => {
         if (time < 0) {
           clearInterval(timer.current);
           setIsSessionDone(prevIsSessionDone => !prevIsSessionDone);
+          
           if (!isSessionDone) {
             setTimeout(() => setTimeLeft(`${breakLength < 10 
               ? '0' + breakLength + ':00' 
