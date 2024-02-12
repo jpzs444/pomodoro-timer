@@ -6,12 +6,14 @@ const App = () => {
   const [sessionLength, setSessionLength] = useState(25);
   const [timeLeft, setTimeLeft] = useState('25:00');
   const [isTimerOn, setIsTimerOn] = useState(false);
+  const [isSessionDone, setIsSessionDone] = useState(false);
 
   const resetTimer = () => {
     setBreakLength(5);
     setSessionLength(25);
     setTimeLeft('25:00');
     setIsTimerOn(false);
+    setIsSessionDone(false);
     clearInterval(timer.current);
   }
 
@@ -60,28 +62,34 @@ const App = () => {
         let minutes = Math.floor(time / 60);
         let seconds = time % 60;
 
-        if (minutes < 10) {
-          minutes = '0' + minutes;
-        }
-
-        if (seconds < 10) {
-          seconds = '0' + seconds;
-        }
+        if (minutes < 10) minutes = '0' + minutes;
+        if (seconds < 10) seconds = '0' + seconds;
 
         setTimeLeft(`${minutes}:${seconds}`);
         time--;
 
         if (time < 0) {
           clearInterval(timer.current);
-          setTimeLeft('00:00');
+          setIsSessionDone(prevIsSessionDone => !prevIsSessionDone);
+          if (!isSessionDone) {
+            setTimeout(() => setTimeLeft(`${breakLength < 10 
+              ? '0' + breakLength + ':00' 
+              : breakLength + ':00'}`)
+            , 1000);
+          } else {
+            setTimeout(() => setTimeLeft(`${sessionLength < 10 
+              ? '0' + sessionLength + ':00' 
+              : sessionLength + ':00'}`)
+            , 1000);
+          }
         }
-      }, 1000);
+      }, 500);
     } else {
       clearInterval(timer.current);
     }
 
     return () => clearInterval(timer.current);
-  }, [isTimerOn, timer, sessionLength, timeLeft]);
+  }, [isTimerOn, timer, sessionLength, timeLeft, breakLength, isSessionDone]);
 
   return (
     <main>
@@ -100,12 +108,12 @@ const App = () => {
       </div>
 
       {/* Output */}
-      <p id="timer-label">Session</p>
+      <p id="timer-label">{isSessionDone ? 'Break' : 'Session'}</p>
       <p id="time-left">{timeLeft}</p>
       <button id="start_stop" onClick={() => setIsTimerOn(prevIsTimerOn => !prevIsTimerOn)}>start / stop</button>
       <button id="reset" onClick={resetTimer}>reset</button>
 
-      {/* TODO: User Story #22*/}
+      {/* TODO: User Story #26*/}
     </main>
   )
 }
