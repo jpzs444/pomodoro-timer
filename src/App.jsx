@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { arrow, pause, play, reset, tomato } from './assets';
 
 const App = () => {
 
@@ -68,7 +69,6 @@ const App = () => {
         if (time < 0) {
           clearInterval(timer.current);
           setTimeout(() => playAudio(), 1000);
-          // playAudio();
           setTimeout(() => setIsSessionDone(prevIsSessionDone => !prevIsSessionDone), 4000);
           
           if (!isSessionDone) {
@@ -105,35 +105,77 @@ const App = () => {
   }
 
   return (
-    <main>
-      {/* Input */}
-      <div className="break" style={{marginTop: 50}}>
-        <p id="break-label">Break Length</p>
-        <button id="break-decrement" onClick={decrementBreak}>-</button>
-        <button id="break-increment" onClick={incrementBreak}>+</button>
-        <p id="break-length">{breakLength}</p>
-      </div>
-      <div className="session">
-        <p id="session-label">Session Length</p>
-        <button id="session-decrement" onClick={decrementSession}>-</button>
-        <button id="session-increment" onClick={incrementSession}>+</button>
-        <p id="session-length">{sessionLength}</p>
-      </div>
-
+    <main className="container d-flex flex-column justify-content-center align-items-center text-center" >
       {/* Output */}
-      <p id="timer-label">{isSessionDone ? 'Break' : 'Session'}</p>
-      <p id="time-left">{timeLeft}</p>
-      <button id="start_stop" onClick={() => setIsTimerOn(prevIsTimerOn => !prevIsTimerOn)}>
-        start / stop
-        <audio 
-          id="beep" 
-          src="https://actions.google.com/sounds/v1/alarms/mechanical_clock_ring.ogg"
-          type="audio/ogg">
-        </audio>
-      </button>
-      <button id="reset" onClick={resetTimer}>reset</button>
+      <div className="timer-label-container d-flex justify-content-center align-items-center" >
+        <img src={tomato} alt="tomato-img" className="tomato-img" />
+        <p id="timer-label" className="fw-semibold" >{isSessionDone ? 'Break' : 'Session'}</p>
+      </div>
+      <p id="time-left" className="fw-bold" >{timeLeft}</p>
+      <div className="btn-main-container container grid row" >
+        <div className="btn-container col-6 text-end" >
+          <button 
+            id="start_stop"
+            className="btn"
+            onClick={() => setIsTimerOn(prevIsTimerOn => !prevIsTimerOn)} >
+            <img src={play} alt="play-img" className="play-img" />
+            <img src={pause} alt="pause-img" className="pause-img" />
+            <audio 
+              id="beep" 
+              src="https://actions.google.com/sounds/v1/alarms/mechanical_clock_ring.ogg"
+              type="audio/ogg" >
+            </audio>
+          </button>
+        </div>
+        <div className="btn-container col-6 text-start d-flex align-items-center" >
+          <button 
+            id="reset" 
+            className="btn"
+            onClick={resetTimer} >
+              <img src={reset} alt="reset-img" className="reset-img" />
+          </button>
+        </div>
+      </div>
 
-      {/* TODO: User Story #26*/}
+      {/* Input */}
+      <div className="container d-flex align-items-center" >
+        <div className="container d-flex flex-column gap-2" >
+          <p id="break-label" className="length-label" >Break Length</p>
+          <div className="container d-flex justify-content-center align-items-center gap-3" >
+            <button 
+              id="break-decrement" 
+              className="decrement-btn btn" 
+              onClick={decrementBreak} >
+                <img src={arrow} alt="arrow-down" className="arrow-down-img" />
+            </button>
+            <p id="break-length" className="length fw-bold" >{breakLength}</p>
+            <button 
+              id="break-increment" 
+              className="increment-btn btn" 
+              onClick={incrementBreak} >
+                <img src={arrow} alt="arrow-up" className="arrow-up-img" />
+            </button>
+          </div>
+        </div>
+        <div className="container d-flex flex-column gap-2" >
+          <p id="session-label" className="length-label" >Session Length</p>
+          <div className="container d-flex justify-content-center align-items-center gap-3" >
+            <button 
+              id="session-decrement" 
+              className="decrement-btn btn" 
+              onClick={decrementSession} >
+                <img src={arrow} alt="arrow-down" className="arrow-down-img" />
+            </button>
+            <p id="session-length" className="length fw-bold" >{sessionLength}</p>
+            <button 
+              id="session-increment" 
+              className="increment-btn btn" 
+              onClick={incrementSession}>
+                <img src={arrow} alt="arrow-up" className="arrow-up-img" />
+            </button>
+          </div>
+        </div>
+      </div>
     </main>
   )
 }
