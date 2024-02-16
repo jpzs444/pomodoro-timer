@@ -32,9 +32,10 @@ const App = () => {
   const decrementSession = () => {
     if (sessionLength >= 2) {
       setSessionLength(prevSessionLength => prevSessionLength - 1);
-      setTimeLeft(`${sessionLength < 11
-        ? '0' + sessionLength - 1 + ':00' 
-        : sessionLength - 1 + ':00'
+      let newSessionLength = sessionLength - 1;
+      setTimeLeft(`${newSessionLength < 10
+        ? '0' + newSessionLength + ':00' 
+        : newSessionLength + ':00'
       }`)
     }
   }
@@ -42,9 +43,10 @@ const App = () => {
   const incrementSession = () => {
     if (sessionLength <= 59){
       setSessionLength(prevSessionLength => prevSessionLength + 1);
-      setTimeLeft(`${sessionLength < 9
-        ? '0' + sessionLength + 1 + ':00' 
-        : sessionLength + 1 + ':00'
+      let newSessionLength = sessionLength + 1;
+      setTimeLeft(`${newSessionLength < 10
+        ? '0' + newSessionLength + ':00' 
+        : newSessionLength + ':00'
       }`)
     }
   }
